@@ -1,0 +1,77 @@
+[
+  {
+    "id": "01_hudozhnya_literatura",
+    "name": "Художня література",
+    "file": "data/01_hudozhnya_literatura.txt"
+  },
+  {
+    "id": "02_detektyvy_trylery",
+    "name": "Детективи та трилери",
+    "file": "data/02_detektyvy_trylery.txt"
+  },
+  {
+    "id": "03_fentezi_fantastyka",
+    "name": "Фентезі та фантастика",
+    "file": "data/03_fentezi_fantastyka.txt"
+  },
+  {
+    "id": "04_suchasna_proza",
+    "name": "Сучасна проза",
+    "file": "data/04_suchasna_proza.txt"
+  },
+  {
+    "id": "05_klasyka",
+    "name": "Класична література",
+    "file": "data/05_klasyka.txt"
+  },
+  {
+    "id": "06_ukrayinska",
+    "name": "Українська література",
+    "file": "data/06_ukrayinska.txt"
+  },
+  {
+    "id": "07_biznes_finansy",
+    "name": "Бізнес, гроші та фінанси",
+    "file": "data/07_biznes_finansy.txt"
+  },
+  {
+    "id": "08_samorozvytok",
+    "name": "Саморозвиток і особиста ефективність",
+    "file": "data/08_samorozvytok.txt"
+  },
+  {
+    "id": "09_psykhologiya",
+    "name": "Психологія та стосунки",
+    "file": "data/09_psykhologiya.txt"
+  },
+  {
+    "id": "10_istoriya",
+    "name": "Історія",
+    "file": "data/10_istoriya.txt"
+  },
+  {
+    "id": "11_biografiyi",
+    "name": "Біографії та мемуари",
+    "file": "data/11_biografiyi.txt"
+  },
+  {
+    "id": "12_zdorovya",
+    "name": "Здоров’я, харчування та активність",
+    "file": "data/12_zdorovya.txt"
+  },
+  {
+    "id": "13_dytyacha",
+    "name": "Дитяча література",
+    "file": "data/13_dytyacha.txt"
+  },
+  {
+    "id": "14_batkivstvo",
+    "name": "Виховання дітей і батьківство",
+    "file": "data/14_batkivstvo.txt"
+  },
+  {
+    "id": "15_nauka_tehnologiyi",
+    "name": "Наука та технології",
+    "file": "data/15_nauka_tehnologiyi.txt"
+  }
+]

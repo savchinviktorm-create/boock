@@ -1,0 +1,1 @@
+{"name":"prostir-knyhy-api","private":true,"type":"module","scripts":{"deploy":"wrangler deploy","db:init":"wrangler d1 execute prostir-knyhy --remote --file=schema.sql"},"devDependencies":{"wrangler":"^4.33.1"}}

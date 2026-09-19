@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#111111">
+  <title>Книга на вечір — Простір корисного контенту</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="brand">
+      <div class="brand-mark">ПКК</div>
+      <div><div class="brand-name">ПРОСТІР КОРИСНОГО КОНТЕНТУ</div><div class="brand-sub">Книга на вечір</div></div>
+    </header>
+    <section id="welcome" class="welcome">
+      <h1 id="greeting">📚 Книга на вечір</h1>
+      <p>Оберіть категорію — і отримайте змістовну рекомендацію з короткою професійною рецензією.</p>
+    </section>
+    <section id="categories" class="grid"></section>
+    <section id="bookView" class="hidden">
+      <button id="backBtn" class="ghost">← До категорій</button>
+      <article class="book-card">
+        <div class="book-icon">📖</div>
+        <div id="bookCategory" class="category-label"></div>
+        <h2 id="bookTitle"></h2>
+        <div id="bookReview" class="review"></div>
+      </article>
+      <button id="nextBtn" class="primary">📚 Наступна книга</button>
+      <button id="premiumBtn" class="premium">⭐ Premium — 10 Stars / 30 днів</button>
+      <p id="status" class="status"></p>
+    </section>
+    <section id="limitView" class="hidden limit">
+      <div class="moon">🌙</div>
+      <h2>На сьогодні достатньо книжкових відкриттів</h2>
+      <p>Поверніться завтра або відкрийте Premium, щоб продовжити рекомендації без добового обмеження.</p>
+      <button id="limitPremiumBtn" class="premium">⭐ Premium — 10 Stars / 30 днів</button>
+      <button id="limitBackBtn" class="ghost">← До категорій</button>
+    </section>
+    <footer>© Простір корисного контенту</footer>
+  </main>
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+const cfg = window.BOOK_APP_CONFIG || {};
+const API = (cfg.API_URL || '').replace(/\/$/, '');
+let categories = [], currentCategory = null, lastBook = null;
+const $ = id => document.getElementById(id);
+
+function show(id) { ['welcome','categories','bookView','limitView'].forEach(x=>$(x).classList.toggle('hidden',x===id)); }
+function tgInitData(){ return tg?.initData || ''; }
+function userName(){ return tg?.initDataUnsafe?.user?.first_name || 'читачу'; }
+function parseBook(line){ const i=line.indexOf(' — '); return i<0?{title:line,author:'',review:line}:{title:line.slice(0,i),rest:line.slice(i+3)}; }
+function splitRest(rest){ const j=rest.indexOf('. '); return j<0?{author:'',review:rest}:{author:rest.slice(0,j),review:rest.slice(j+2)}; }
+async function loadCategories(){
+  const r=await fetch('categories.json'); categories=await r.json();
+  $('categories').innerHTML=categories.map(c=>`<button class="cat" data-id="${c.id}"><span>📚</span><b>${c.name}</b></button>`).join('');
+  document.querySelectorAll('.cat').forEach(b=>b.onclick=()=>openCategory(b.dataset.id));
+  $('greeting').textContent=`📚 ${userName()}, книга на вечір`;
+}
+async function openCategory(id){ currentCategory=categories.find(c=>c.id===id); await getBook(); }
+async function getBook(){
+  $('status').textContent='';
+  if(!API || API.includes('YOUR-WORKER')) { $('status').textContent='Потрібно вказати API Worker у config.js.'; return; }
+  try{
+    const r=await fetch(API+'/api/book',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({initData:tgInitData(),category:currentCategory.id})});
+    const data=await r.json();
+    if(data.limit_reached){ show('limitView'); return; }
+    if(!r.ok) throw new Error(data.error||'Помилка');
+    renderBook(data.book,currentCategory.name); show('bookView');
+  }catch(e){ $('status').textContent='Не вдалося отримати рекомендацію. Перевірте налаштування Worker.'; console.error(e); }
+}
+function renderBook(book,cat){
+  $('bookCategory').textContent=cat;
+  $('bookTitle').textContent=book.title;
+  $('bookReview').innerHTML=`<p><strong>${book.author}</strong></p><p>${book.review}</p>`;
+}
+async function buyPremium(){
+  if(!API || API.includes('YOUR-WORKER')) { $('status').textContent='Потрібно вказати API Worker у config.js.'; return; }
+  try{
+    const r=await fetch(API+'/api/invoice',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({initData:tgInitData()})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Помилка');
+    if(tg?.openInvoice){ tg.openInvoice(d.invoice_link,()=>getBook()); }
+    else window.location.href=d.invoice_link;
+  }catch(e){ $('status').textContent='Не вдалося відкрити оплату. Спробуйте ще раз.'; }
+}
+$('nextBtn').onclick=getBook; $('premiumBtn').onclick=buyPremium; $('limitPremiumBtn').onclick=buyPremium;
+$('backBtn').onclick=()=>show('categories'); $('limitBackBtn').onclick=()=>show('categories');
+loadCategories().catch(()=>{$('status').textContent='Не вдалося завантажити категорії.'});
+</script>
+</body>
+</html>
