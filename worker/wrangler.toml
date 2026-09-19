@@ -1,8 +1,8 @@
-name = "prostir-knyhy-api"
+name = "boock"
 main = "src.js"
 compatibility_date = "2026-09-19"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "prostir-knyhy"
-database_id = "REPLACE_AFTER_CREATING_D1"
+database_id = "f4d90bfd-2464-4a8d-906e-a0c95e19e855"
